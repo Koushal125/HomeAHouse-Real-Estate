@@ -25,7 +25,7 @@ const PropertyList = () => {
   const [filters, setFilters] = useState({
     minPrice: '',
     maxPrice: '',
-    city: '',
+    city: searchParams.get('city') ?? '',
     propertyType: searchParams.get('type') ?? '',
     title: '',
     bedrooms: '',
@@ -137,10 +137,11 @@ const PropertyList = () => {
     }
   }, []); // stable — reads latest values via refs
 
-  // Sync navbar search query when URL ?search= param changes
+  // Sync filters when URL params change (e.g. navigating from hero search)
   useEffect(() => {
     const q = searchParams.get('search') ?? '';
     const t = searchParams.get('type') ?? '';
+    const c = searchParams.get('city') ?? '';
     let changed = false;
     if (q !== globalQueryRef.current) {
       setGlobalQuery(q);
@@ -149,9 +150,18 @@ const PropertyList = () => {
     }
     if (t !== filtersRef.current.propertyType) {
       setFilters((prev) => ({ ...prev, propertyType: t }));
+      filtersRef.current = { ...filtersRef.current, propertyType: t };
       changed = true;
     }
-    if (changed) setPage(0);
+    if (c !== filtersRef.current.city) {
+      setFilters((prev) => ({ ...prev, city: c }));
+      filtersRef.current = { ...filtersRef.current, city: c };
+      changed = true;
+    }
+    if (changed) {
+      if (page === 0) fetchProperties(0);
+      else setPage(0);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.toString()]);
 

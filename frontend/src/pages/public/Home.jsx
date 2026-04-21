@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ROUTES, ROLES } from '../../utils/constants';
@@ -6,7 +6,7 @@ import InlineNavbar from '../../components/layout/InlineNavbar';
 import {
   ArrowRight, BadgeCheck, Building2, MapPin, Search,
   Shield, Star, TrendingUp, Users, Sparkles, CheckCircle,
-  Award, ArrowUpRight,
+  Award,
 } from 'lucide-react';
 
 /* -- static data -- */
@@ -73,6 +73,16 @@ const TESTIMONIALS = [
 const Home = () => {
   const { isAuthenticated, user } = useSelector((s) => s.auth);
   const [activeTab, setActiveTab] = useState('buy');
+
+  useEffect(() => {
+    const tabs = ['buy', 'rent', 'list'];
+    let i = 0;
+    const id = setInterval(() => {
+      i = (i + 1) % tabs.length;
+      setActiveTab(tabs[i]);
+    }, 1800);
+    return () => clearInterval(id);
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const navigate = useNavigate();
@@ -85,7 +95,7 @@ const Home = () => {
 
   const buildPropertyUrl = (query, type) => {
     const params = new URLSearchParams();
-    if (query) params.set('search', query);
+    if (query) params.set('city', query);
     if (type)  params.set('type', type);
     const qs = params.toString();
     return qs ? `/properties?${qs}` : '/properties';
@@ -196,48 +206,44 @@ const Home = () => {
               <Search size={18} strokeWidth={2.5} /> Search
             </button>
           </form>
+
+          {/* Auth CTAs — only shown when not logged in */}
+          {!isAuthenticated && (
+            <div className="flex items-center gap-3 mt-2">
+              <Link
+                to={ROUTES.LOGIN}
+                className="px-8 py-3 rounded-full font-bold text-sm text-white border border-white/30 bg-white/10 hover:bg-white/20 transition-all"
+              >
+                Log In
+              </Link>
+              <Link
+                to={ROUTES.REGISTER}
+                className="px-8 py-3 rounded-full font-black text-sm text-slate-900 transition-all hover:brightness-95 active:scale-95"
+                style={{ backgroundColor: '#E9B38F' }}
+              >
+                Register Free
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Bottom bar */}
-        <div className="relative z-10 px-8 lg:px-12 pb-7 flex items-center justify-between">
+        <div className="relative z-10 px-8 lg:px-12 pb-7 flex items-center justify-center">
 
-          {/* Left label */}
-          <div
-            className="hidden lg:flex items-center gap-3 group cursor-pointer"
-            onClick={() => navigate('/properties')}
-          >
-            <div className="p-3 rounded-full border border-white/20 bg-white/5 backdrop-blur-md group-hover:bg-white/15 transition-all">
-              <ArrowUpRight className="text-white" size={16} />
-            </div>
-            <span className="text-white font-bold text-sm">Discover Premium</span>
-          </div>
-
-          {/* Intent toggle */}
-          <div className="mx-auto flex gap-0 p-2 bg-black/40 backdrop-blur-2xl rounded-full border border-white/10">
-            {[{ key: 'buy', label: 'Buy' }, { key: 'rent', label: 'Rent' }].map(({ key, label }) => (
-              <button
+          {/* Intent ticker — non-interactive, auto-cycles */}
+          <div className="flex gap-0 p-2 bg-black/40 backdrop-blur-2xl rounded-full border border-white/10">
+            {[{ key: 'buy', label: 'Buy' }, { key: 'rent', label: 'Rent' }, { key: 'list', label: 'List' }].map(({ key, label }) => (
+              <span
                 key={key}
-                onClick={() => setActiveTab(key)}
-                className={`px-8 py-3 rounded-full font-bold text-sm transition-all ${
-                  activeTab === key ? 'bg-white/15 text-white' : 'text-white/40 hover:text-white'
+                className={`px-8 py-3 rounded-full font-bold text-sm select-none transition-all duration-500 ${
+                  activeTab === key
+                    ? 'bg-white/15 text-white scale-105'
+                    : 'text-white/35'
                 }`}
               >
                 {label}
-              </button>
+              </span>
             ))}
-            <Link
-              to={listPropertyRoute}
-              className="px-8 py-3 rounded-full font-bold text-sm text-white/40 hover:text-white transition-all"
-            >
-              List
-            </Link>
-          </div>
-
-          {/* Pagination dots */}
-          <div className="hidden lg:flex gap-1.5 items-center">
-            <div className="h-1.5 w-6 bg-white rounded-full" />
-            <div className="h-1.5 w-1.5 bg-white/30 rounded-full" />
-            <div className="h-1.5 w-1.5 bg-white/20 rounded-full" />
           </div>
         </div>
       </section>

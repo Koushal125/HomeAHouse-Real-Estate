@@ -17,8 +17,8 @@ const statusBadgeVariant = {
   RESERVED: 'warning', RENTED: 'primary', SOLD: 'default', OFF_MARKET: 'default',
 };
 
-const IMG_FALLBACK = 'https://images.unsplash.com/photo-1600585154340-be6191da95b8?auto=format&fit=crop&q=80&w=400';
-const FOCAL        = 'https://images.unsplash.com/photo-1600585154340-be6191da95b8?auto=format&fit=crop&q=80&w=1200';
+const IMG_FALLBACK = 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=400';
+const FOCAL        = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=1200';
 
 const BareStat = ({ label, value }) => (
   <div>
@@ -27,7 +27,7 @@ const BareStat = ({ label, value }) => (
   </div>
 );
 
-const ProgressCard = ({ label, value, sub, pct, peach }) => {
+const ProgressCard = ({ label, value, sub, pct, peach, secondary, secondaryLabel }) => {
   const bg  = peach ? '#E9B38F1A' : '#ecfdf5';
   const dot = peach ? '#E9B38F'   : '#10b981';
   const lbl = peach ? '#b8703a'   : '#059669';
@@ -41,7 +41,10 @@ const ProgressCard = ({ label, value, sub, pct, peach }) => {
       </div>
       <div className="flex items-end justify-between mb-3">
         <p className="text-4xl font-black text-slate-900 leading-none tracking-tighter">{value}</p>
-        <p className="text-2xl font-black text-slate-400 leading-none">{pct}%</p>
+        <div className="text-right">
+          <p className="text-2xl font-black text-slate-900 leading-none">{secondary}</p>
+          {secondaryLabel && <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{secondaryLabel}</p>}
+        </div>
       </div>
       <div className="w-full h-1.5 bg-white/70 rounded-full overflow-hidden">
         <div className="h-full rounded-full transition-all duration-700" style={{ width: pct + '%', backgroundColor: dot }} />
@@ -228,8 +231,8 @@ const BrokerDashboard = () => {
 
             {/* Progress cards */}
             <div className="flex flex-col sm:flex-row gap-6">
-              <ProgressCard label="Owner Submissions" value={stats.newSubmissions} sub="Awaiting your review" pct={stats.subPct}    peach />
-              <ProgressCard label="Total Revenue"     value={revenueLabel}          sub="From closed deals"  pct={stats.revenuePct}       />
+              <ProgressCard label="Owner Submissions" value={stats.newSubmissions} sub="Awaiting your review" pct={stats.subPct}    peach secondary={stats.newSubmissions}       secondaryLabel="pending" />
+              <ProgressCard label="Total Revenue"     value={revenueLabel}          sub="From closed deals"  pct={stats.revenuePct}       secondary={stats.totalDealsClosed} secondaryLabel="closed" />
             </div>
 
             {/* Recent Listings — newest by ANY broker */}
