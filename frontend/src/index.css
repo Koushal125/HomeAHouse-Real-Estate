@@ -1,0 +1,235 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+/* ─── Design tokens ──────────────────────────────────────────── */
+@theme {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand palette – amber/warm */
+  --color-brand-50:  #fffbeb;
+  --color-brand-100: #fef3c7;
+  --color-brand-200: #fde68a;
+  --color-brand-300: #fcd34d;
+  --color-brand-400: #fbbf24;
+  --color-brand-500: #f59e0b;
+  --color-brand-600: #d97706;
+  --color-brand-700: #b45309;
+  --color-brand-800: #92400e;
+  --color-brand-900: #78350f;
+  --color-brand-950: #0f172a;
+
+  /* Named animations */
+  --animate-fade-in:         fade-in 0.3s ease-out both;
+  --animate-fade-in-slow:    fade-in 0.6s ease-out both;
+  --animate-slide-up:        slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-up-slow:   slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-in-right:  slide-in-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-in-left:   slide-in-left 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-shimmer:         shimmer 1.8s linear infinite;
+  --animate-pulse-soft:      pulse-soft 2.5s ease-in-out infinite;
+  --animate-bounce-soft:     bounce-soft 1.8s ease-in-out infinite;
+  --animate-scale-in:        scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-spin-slow:       spin 3s linear infinite;
+  --animate-float:           float 5s ease-in-out infinite;
+  --animate-glow:            glow 2s ease-in-out infinite alternate;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(56px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-56px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0;  }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.7; transform: scale(0.97); }
+}
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px);  }
+  50%       { transform: translateY(-12px); }
+}
+@keyframes glow {
+  from { box-shadow: 0 0 20px rgba(233, 179, 143, 0.25); }
+  to   { box-shadow: 0 0 40px rgba(233, 179, 143, 0.55); }
+}
+@keyframes shrink {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+@keyframes toast-enter {
+  from { opacity: 0; transform: translateX(100%) scale(0.95); }
+  to   { opacity: 1; transform: translateX(0)     scale(1);   }
+}
+@keyframes toast-leave {
+  from { opacity: 1; transform: translateX(0)     scale(1);   }
+  to   { opacity: 0; transform: translateX(100%) scale(0.95); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes ring-spin {
+  0%   { transform: rotate(0deg);   }
+  100% { transform: rotate(360deg); }
+}
+@keyframes progress-bar {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ─── Base ───────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fafaf9;
+  color: #0f172a;
+  line-height: 1.6;
+}
+
+/* ─── Custom scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #fcd34d, #f59e0b); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #f59e0b, #d97706); }
+
+/* ─── Skeleton loading ───────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, #eef0f6 25%, #e2e5f0 50%, #eef0f6 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.8s linear infinite;
+  border-radius: 0.5rem;
+}
+
+/* ─── Glass utilities ────────────────────────────────────────── */
+.glass {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+.glass-dark {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ─── Gradient text ──────────────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, #d97706 0%, #E9B38F 50%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gradient-gold {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #fde68a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glow effects ───────────────────────────────────────────── */
+.glow-indigo {
+  box-shadow: 0 0 30px rgba(233, 179, 143, 0.35), 0 4px 12px rgba(233, 179, 143, 0.2);
+}
+.glow-violet {
+  box-shadow: 0 0 30px rgba(233, 179, 143, 0.35), 0 4px 12px rgba(233, 179, 143, 0.2);
+}
+.glow-emerald {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+/* ─── Mesh gradient bg ───────────────────────────────────────── */
+.mesh-bg {
+  background-color: #fafaf9;
+  background-image:
+    radial-gradient(at 20% 20%, rgba(233,179,143,0.10) 0px, transparent 50%),
+    radial-gradient(at 80% 80%, rgba(233,179,143,0.08) 0px, transparent 50%),
+    radial-gradient(at 40% 70%, rgba(245,158,11,0.06) 0px, transparent 50%);
+}
+
+/* ─── Card hover lift ────────────────────────────────────────── */
+.card-hover {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(233,179,143,0.15), 0 8px 16px rgba(0,0,0,0.06);
+}
+
+/* ─── Focus ring ─────────────────────────────────────────────── */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(233,179,143,0.45);
+}
+
+/* ─── Progress bar (toast) ───────────────────────────────────── */
+.toast-progress {
+  transform-origin: left;
+  animation: progress-bar var(--duration, 4000ms) linear forwards;
+}
+
+/* ─── Sidebar gradient ───────────────────────────────────────── */
+.sidebar-gradient {
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* ─── Page transitions ───────────────────────────────────────── */
+.page-enter {
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Dot grid pattern ───────────────────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 0);
+  background-size: 28px 28px;
+}
+.dot-grid-dark {
+  background-image: radial-gradient(circle, rgba(233,179,143,0.10) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* ─── Topbar progress bar ────────────────────────────────────── */
+.nprogress-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #d97706, #E9B38F, #fbbf24);
+  animation: shimmer 1.2s linear infinite;
+  background-size: 200% 100%;
+}
