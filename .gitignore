@@ -17,3 +17,6 @@ desktop.ini
 *.iml
 *.iws
 *.ipr
+
+IMPLEMENTATION_PLAN.md
+CODEBASE_AUDIT_REPORT.md
