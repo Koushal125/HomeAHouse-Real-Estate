@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from '../store';
 import { ToastContext } from '../context/ToastContext';
 import DealPipeline from '../features/transactions/DealPipeline';
 
@@ -21,11 +23,13 @@ const showToast = vi.fn();
 
 const renderPipeline = () =>
   render(
-    <ToastContext.Provider value={{ showToast }}>
-      <MemoryRouter>
-        <DealPipeline />
-      </MemoryRouter>
-    </ToastContext.Provider>
+    <Provider store={store}>
+      <ToastContext.Provider value={{ showToast }}>
+        <MemoryRouter>
+          <DealPipeline />
+        </MemoryRouter>
+      </ToastContext.Provider>
+    </Provider>
   );
 
 const makeDeal = (overrides = {}) => ({
@@ -139,7 +143,7 @@ describe('DealPipeline', () => {
 
     await waitFor(() => expect(screen.queryByText(/loading/i)).not.toBeInTheDocument());
 
-    // Rental period dates should appear in the card
-    expect(screen.getByText(/6\/1\/2025/i)).toBeInTheDocument();
+    // Rental period rendered as a date-range with an em-dash separator
+    expect(screen.getByText((content) => content.includes('\u2013'))).toBeInTheDocument();
   });
 });

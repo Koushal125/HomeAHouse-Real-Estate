@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from '../store';
 import Register from '../features/auth/Register';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
@@ -21,9 +23,11 @@ vi.mock('react-router-dom', async (importOriginal) => {
 
 const renderRegister = () =>
   render(
-    <MemoryRouter>
-      <Register />
-    </MemoryRouter>
+    <Provider store={store}>
+      <MemoryRouter>
+        <Register />
+      </MemoryRouter>
+    </Provider>
   );
 
 const fillForm = ({

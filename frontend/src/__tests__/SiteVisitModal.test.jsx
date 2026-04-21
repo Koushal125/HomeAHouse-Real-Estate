@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ToastContext } from '../context/ToastContext';
 import SiteVisitModal from '../components/property/SiteVisitModal';
@@ -15,6 +15,20 @@ import api from '../services/api';
 
 const showToast = vi.fn();
 
+// The component positions itself relative to an anchorRef. Provide a fake DOM
+// element with a mocked getBoundingClientRect so calcPos() sets pos and the
+// modal actually renders during tests.
+const makeAnchorRef = () => {
+  const el = document.createElement('button');
+  el.getBoundingClientRect = () => ({
+    top: 100, bottom: 200, left: 50, right: 350, width: 300, height: 100,
+  });
+  document.body.appendChild(el);
+  return { current: el };
+};
+
+let anchorRef;
+
 const renderModal = (props = {}) =>
   render(
     <ToastContext.Provider value={{ showToast }}>
@@ -24,6 +38,7 @@ const renderModal = (props = {}) =>
         isOpen={true}
         onClose={vi.fn()}
         onSuccess={vi.fn()}
+        anchorRef={anchorRef}
         {...props}
       />
     </ToastContext.Provider>
@@ -43,6 +58,11 @@ const futureDatetimeLocal = () => {
 describe('SiteVisitModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    anchorRef = makeAnchorRef();
+  });
+
+  afterEach(() => {
+    anchorRef.current?.remove();
   });
 
   it('renders the modal with property title when isOpen=true', () => {
@@ -180,12 +200,12 @@ describe('SiteVisitModal', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it('calls onClose when the backdrop is clicked', () => {
+  it('calls onClose when the backdrop is clicked', async () => {
     const onClose = vi.fn();
     renderModal({ onClose });
-    // The backdrop is the first full-screen div
-    const backdrop = document.querySelector('.absolute.inset-0');
-    fireEvent.click(backdrop);
+    await waitFor(() => expect(screen.getByText('Schedule a Visit')).toBeInTheDocument());
+    // The component listens for mousedown outside the panel — fire it on body
+    fireEvent.mouseDown(document.body);
     expect(onClose).toHaveBeenCalled();
   });
 });

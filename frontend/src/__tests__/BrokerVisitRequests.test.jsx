@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from '../store';
 import { ToastContext } from '../context/ToastContext';
 import BrokerVisitRequests from '../features/visits/BrokerVisitRequests';
 
@@ -21,11 +23,13 @@ const showToast = vi.fn();
 
 const renderBrokerVisits = () =>
   render(
-    <ToastContext.Provider value={{ showToast }}>
-      <MemoryRouter>
-        <BrokerVisitRequests />
-      </MemoryRouter>
-    </ToastContext.Provider>
+    <Provider store={store}>
+      <ToastContext.Provider value={{ showToast }}>
+        <MemoryRouter>
+          <BrokerVisitRequests />
+        </MemoryRouter>
+      </ToastContext.Provider>
+    </Provider>
   );
 
 const makeVisit = (overrides = {}) => ({
