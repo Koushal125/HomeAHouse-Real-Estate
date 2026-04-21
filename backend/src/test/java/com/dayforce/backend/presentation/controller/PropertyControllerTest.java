@@ -64,7 +64,7 @@ class PropertyControllerTest {
     @DisplayName("GET /api/properties — returns paginated list of active properties")
     void listProperties_returnsPaginatedPage() throws Exception {
         var page = new PageImpl<>(List.of(sampleProperty()), PageRequest.of(0, 20), 1);
-        when(propertyService.listAllActiveProperties(0, 20)).thenReturn(page);
+        when(propertyService.listAllActiveProperties(anyInt(), anyInt(), any(), any())).thenReturn(page);
 
         mockMvc.perform(get("/api/properties"))
                 .andExpect(status().isOk())
